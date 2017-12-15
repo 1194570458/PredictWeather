@@ -64,18 +64,6 @@ public class City {
         protected void onPreExecute() {
             progressDialog = ProgressDialog.show(activity, "", "正在初始化...");
             progressDialog.setCancelable(false);
-            progressDialog.setOnKeyListener(new DialogInterface.OnKeyListener() {
-                @Override
-                public boolean onKey(DialogInterface dialogInterface, int i, KeyEvent keyEvent) {
-                    if (keyEvent.getAction() == KeyEvent.ACTION_DOWN) {
-                        flat = 1;
-                        Init(activity, handler);
-                        progressDialog.dismiss();
-                    }
-                    return false;
-                }
-            });
-
         }
 
         @Override
@@ -86,12 +74,6 @@ public class City {
             msg.what = 3;
             handler.sendMessage(msg);
         }
-
-        @Override
-        protected void onCancelled(Void aVoid) {
-            Toast.makeText(activity, "初始化取消", Toast.LENGTH_SHORT).show();
-        }
-
 
         @Override
         protected Void doInBackground(String... strings) {

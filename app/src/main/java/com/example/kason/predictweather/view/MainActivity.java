@@ -22,6 +22,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bigkoo.pickerview.OptionsPickerView;
+import com.bigkoo.pickerview.listener.OnDismissListener;
 import com.example.kason.predictweather.R;
 import com.example.kason.predictweather.adapter.RecDailyAdapter;
 import com.example.kason.predictweather.adapter.RecHourlyAdapter;
@@ -53,7 +54,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public static String APPKEY = "c063cc71ea0e3234558e89148747c1de";
 
     private LinearLayout ll_location;
-    private TextView tv_city_name;
     public static SwipeRefreshLayout swipeRefresh;
 
     private ArrayList<JsonBean> options1Items = new ArrayList<>();
@@ -144,6 +144,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     };
 
+    private TextView tv_city_name;
     private TextView tv_updatetime;
     private TextView tv_date;
     private TextView tv_week;
@@ -172,11 +173,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         initJsonData();
         City.Init(this, handler);
         sp = getSharedPreferences("City", MODE_PRIVATE);
+        cityName = sp.getString("city", "null");
+        if (!cityName.equals("null") && City.CITY != null) {
+            tv_city_name.setText(cityName);
+            onRefresh();
+        }
         assets = getAssets();
         TimerTask timerTask = new TimerTask() {
             @Override
             public void run() {
-                Time t=new Time(); // or Time t=new Time("GMT+8"); 加上Time Zone资料
+                Time t = new Time(); // or Time t=new Time("GMT+8"); 加上Time Zone资料
                 t.setToNow(); // 取得系统时间。
                 int hour = t.hour;    // 0-23
                 try {
@@ -208,6 +214,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         new Timer().schedule(timerTask, 0, 60000);
     }
 
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
 
     private void initView() {
         tv_city_name = (TextView) findViewById(R.id.tv_city_name);
@@ -280,6 +291,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         pvOptions.setPicker(options1Items, options2Items);//二级选择器
         //        pvOptions.setPicker(options1Items, options2Items, options3Items);//三级选择器
         pvOptions.show();
+        pvOptions.setOnDismissListener(new OnDismissListener() {
+            @Override
+            public void onDismiss(Object o) {
+                if (cityName.equals("null")) {
+                    Toast.makeText(MainActivity.this, "请选择你的城市", Toast.LENGTH_LONG).show();
+                    showPickerView();
+                }
+            }
+        });
     }
 
 

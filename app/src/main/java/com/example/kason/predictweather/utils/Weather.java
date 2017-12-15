@@ -43,14 +43,6 @@ public class Weather {
         }
 
         @Override
-        protected void onPreExecute() {
-        }
-
-        @Override
-        protected void onPostExecute(Object o) {
-        }
-
-        @Override
         protected Object doInBackground(Object[] objects) {
             try {
                 URL url = new URL("https://way.jd.com/jisuapi/weather?city=" + city + "&cityid=" + cityId + "&citycode=" + cityCode + "&appkey=" + APPKEY);
